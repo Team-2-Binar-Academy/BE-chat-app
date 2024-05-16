@@ -1,6 +1,8 @@
 const jsonwebtoken = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { createUser, getUserByEmail } = require("../../repository/user");
+
+const { createUser, getUserByEmail, getGoogleAccessTokenData } = require("../../repository/user");
+const { createToken } = require("./util");
 
 exports.register = async (payload) => {
     let user = await createUser(payload);
@@ -67,13 +69,12 @@ exports.login = async (email, password) => {
 exports.googleLogin = async (accessToken) => {
   // validate the token and get the data from google
   const googleData = await getGoogleAccessTokenData(accessToken);
+ let user;
+  try {
+    // get is there any existing user with the email
+   user = await getUserByEmail(googleData?.email);
 
-  // get is there any existing user with the email
-  let user = await getUserByEmail(googleData?.email);
-
-  // if not found
-  if (!user) {
-    // Create new user based on google data that get by access_token
+  } catch(error){
     user = await createUser({
       email: googleData?.email,
       password: "",
@@ -81,6 +82,19 @@ exports.googleLogin = async (accessToken) => {
       picture: googleData?.picture,
     });
   }
+
+  
+
+  // if not found
+//   if (!user) {
+//     // Create new user based on google data that get by access_token
+//     user = await createUser({
+//       email: googleData?.email,
+//       password: "",
+//       name: googleData?.name,
+//       picture: googleData?.picture,
+//     });
+//   }
 
   // Delete object password from user
   delete user?.dataValues?.password;

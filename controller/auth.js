@@ -1,4 +1,4 @@
-const { register, login } = require("../usecase/auth");
+const { register, login, googleLogin } = require("../usecase/auth");
 
 exports.register = async (req, res, next) => {
   try {
