@@ -3,6 +3,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const { user } = require("../../models");
+const { error } = require("console");
 
 exports.createUser = async (payload) => {
   try {
@@ -27,7 +28,7 @@ exports.createUser = async (payload) => {
     }
 };
 
-exports.getUserByEmail = async (email) => {
+exports.getUserByEmail = async (email, returnError) => {
   // const key = `user:${email}`;
 
   // // get from redis
@@ -42,6 +43,7 @@ exports.getUserByEmail = async (email) => {
       email,
     },
   });
+
   if (data.length > 0) {
     // save to redis
     // await setData(key, data[0], 300);
@@ -49,7 +51,11 @@ exports.getUserByEmail = async (email) => {
     return data[0];
   }
 
-  throw new Error(`User is not found!`);
+  if (returnError) {
+    throw new Error(`User is not found!`);
+  }
+
+  return null;
 };
 
 exports.getGoogleAccessTokenData = async (accessToken) => {
