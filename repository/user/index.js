@@ -6,7 +6,12 @@ const { user } = require("../../models");
 const { error } = require("console");
 
 exports.createUser = async (payload) => {
+  const existingUser = await user.findOne({ where: { email: payload.email } });
+  if (existingUser) {
+    throw new Error("Email already exists");
+  }
   try {
+
     // encrypt the password
     payload.password = bcrypt.hashSync(payload.password, 10);
 
