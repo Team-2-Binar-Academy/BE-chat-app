@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const path = require("path");
 const bcrypt = require("bcrypt");
+const axios = require("axios");
 const { user } = require("../../models");
 
 exports.createUser = async (payload) => {
@@ -20,10 +21,10 @@ exports.createUser = async (payload) => {
     // await setData(keyEmail, data, 300);
 
     return data;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Email Already Exist!");
-  }
+    } catch (error) {
+        console.error(error);
+        throw new Error("User with that email already exists!");
+    }
 };
 
 exports.getUserByEmail = async (email) => {
