@@ -18,7 +18,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon index",
-    "start": "node index.js"
+    "start": "node sequelize db:migrate && node index.js"
   },
   "keywords": [],
   "author": "",
