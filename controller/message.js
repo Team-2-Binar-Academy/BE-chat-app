@@ -1,4 +1,5 @@
 const messageUsecase = require("../usecase/message");
+const authUsecase = require("../usecase/auth");
 
 exports.getMessages = async (req, res, next) => {
     try {
@@ -15,7 +16,9 @@ exports.getMessages = async (req, res, next) => {
 
 exports.createMessage = async (req, res, next) => {
     try {
+        const sender_id = req.user.id;
         const { message } = req.body;
+
         if (!message || message == "") {
             return next({
                 message: "Message must be provided!",
@@ -25,6 +28,7 @@ exports.createMessage = async (req, res, next) => {
 
         const data = await messageUsecase.createMessage({
             message,
+            user_id: sender_id,
         });
 
         // Emit event

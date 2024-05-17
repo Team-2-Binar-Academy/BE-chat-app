@@ -97,6 +97,7 @@ exports.profile = async (req, res, next) => {
     try {
         // get user by id
         const data = req.user;
+        console.log("🚀 ~ controller.profile= ~ data:", data);
 
         res.status(200).json({
             message: "Success",

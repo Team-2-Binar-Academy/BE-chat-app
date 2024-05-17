@@ -1,7 +1,12 @@
 const jsonwebtoken = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
-const { createUser, getUserByEmail, getGoogleAccessTokenData } = require("../../repository/user");
+const {
+    createUser,
+    getUserByID,
+    getUserByEmail,
+    getGoogleAccessTokenData,
+} = require("../../repository/user");
 const { createToken } = require("./util");
 
 exports.register = async (payload) => {
@@ -95,6 +100,7 @@ exports.googleLogin = async (accessToken) => {
 };
 
 exports.profile = async (id) => {
+    console.log("usecase -> profile id", id);
     // get the user
     let data = await getUserByID(id);
 
