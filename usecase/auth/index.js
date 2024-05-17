@@ -1,7 +1,12 @@
 const jsonwebtoken = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
-const { createUser, getUserByEmail, getGoogleAccessTokenData } = require("../../repository/user");
+const {
+    createUser,
+    getUserByID,
+    getUserByEmail,
+    getGoogleAccessTokenData,
+} = require("../../repository/user");
 const { createToken } = require("./util");
 
 exports.register = async (payload) => {
@@ -66,34 +71,49 @@ exports.login = async (email, password) => {
     return data;
 };
 
-
-
 exports.googleLogin = async (accessToken) => {
-  // validate the token and get the data from google
-  const googleData = await getGoogleAccessTokenData(accessToken);
-  console.log("google-data",googleData)
+    // validate the token and get the data from google
+    const googleData = await getGoogleAccessTokenData(accessToken);
+    console.log("google-data", googleData);
 
-  // get is there any existing user with the email
-  let user = await getUserByEmail(googleData?.email);
-  console.log("user",user)
+    // get is there any existing user with the email
+    let user = await getUserByEmail(googleData?.email);
+    console.log("user", user);
 
-  // if not found
-  if (!user) {
-    // Create new user based on google data that get by access_token
-    user = await createUser({
-      email: googleData?.email,
-      password: "",
-      name: googleData?.name,
-    });
-  }
+    // if not found
+    if (!user) {
+        // Create new user based on google data that get by access_token
+        user = await createUser({
+            email: googleData?.email,
+            password: "",
+            name: googleData?.name,
+        });
+    }
 
-  // Delete object password from user
-  delete user?.dataValues?.password;
+    // Delete object password from user
+    delete user?.dataValues?.password;
 
-  // create token
-  const data = createToken(user);
+    // create token
+    const data = createToken(user);
 
-  return data;
+    return data;
 };
 
+exports.profile = async (id) => {
+    console.log("usecase -> profile id", id);
+    // get the user
+    let data = await getUserByID(id);
 
+    if (!data) {
+        throw new Error(`User is not found!`);
+    }
+
+    // delete password
+    if (data?.dataValues?.password) {
+        delete data?.dataValues?.password;
+    } else {
+        delete data?.password;
+    }
+
+    return data;
+};
